@@ -1,0 +1,107 @@
+# -*- coding:utf-8 -*-
+import re
+import os
+import json
+from html.parser import HTMLParser
+
+class GoogleItem:
+
+    def __init__(self):
+        self.title = ''
+        self.content = ''
+        self.source_url = ''
+        self.source_name = ''
+
+    def to_dict(self):
+        return {
+            'title': self.title,
+            'content': self.content,
+            'source_url': self.source_url,
+            'source_name': self.source_name,
+        }
+
+class GoogleItemParser(HTMLParser):
+    """
+    parse items(snippets) from a single web page from Google
+    """
+
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.tem_googleItem = GoogleItem()
+        self.is_in_title = False
+        self.is_in_content = False
+        self.is_in_source_name = False
+        self.google_item_list = []
+        self.content_span_num = 0
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'span':
+            for (variable, value) in attrs:
+                if variable == "class" and value == "st":
+                    self.is_in_content = True
+                    break
+            if self.is_in_content:
+                self.content_span_num += 1
+
+        elif tag == 'div':
+            for (variable, value) in attrs:
+                if variable == "class" and value == "rc":
+                    self.is_in_title = True
+                    self.tem_googleItem = GoogleItem()
+                    break
+                if variable == 'class' and value == 'crl':
+                    self.is_in_source_name = True
+                    break
+
+        elif tag == 'a' and self.is_in_title:
+            for (variable, value) in attrs:
+                if variable == 'href':
+                    self.tem_googleItem.source_url = value
+                    break
+
+    def handle_endtag(self, tag):
+        if self.is_in_title and tag == 'a':
+            self.is_in_title = False
+            return
+
+        if self.is_in_source_name and tag == 'div':
+            self.is_in_source_name = False
+            return
+
+        if self.is_in_content and tag == 'span':
+            self.content_span_num -= 1
+            if self.content_span_num > 0:
+                return
+            self.is_in_content = False
+            if self.tem_googleItem.content == '':
+                return
+            try:
+                self.tem_googleItem.content = str(self.tem_googleItem.content).lower()
+            except Exception as e:
+                print(e)
+                print(self.tem_googleItem.content)
+                return []
+
+            self.google_item_list.append(self.tem_googleItem)
+
+
+    def handle_data(self, data):
+        if self.is_in_title:
+            self.tem_googleItem.title += data
+        if self.is_in_source_name:
+            self.tem_googleItem.source_name += data
+        if self.is_in_content:
+            self.tem_googleItem.content += data
+
+    def get_items(self):
+        google_item_dict_list = [google_item.to_dict() for google_item in self.google_item_list]
+        self.google_item_list = []
+        return google_item_dict_list
+
+if __name__ == '__main__':
+    html_dir = 'search_result'
+    with open(os.path.join(html_dir, 'Coronary_Heart_Disease_Heart_Attack.html'), 'r', encoding='utf-8') as f:
+        content = f.read()
+        parser = GoogleItemParser()
+        parser.feed(content)
+        item_list = parser.get_items()

@@ -1,0 +1,2 @@
+"Coronary Heart Disease" "Heart Attack"
+"Coronary Heart Disease" "Heart Failure"
