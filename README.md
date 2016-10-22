@@ -18,9 +18,9 @@ Derived from Eric's gopage package.
 
 ## Usage
 
-1. Edit a keyword list and stores it into a .txt file.
-2. Use PageSearcher to get corresponding html pages for given query.
-3. Use EntitySearcher to get text and extract relevent sentences from html file generated from Step 2.
+1. Edit a keywords list and store it into a '.txt' file.
+2. Use PageSearcher to get corresponding html pages for given queries.
+3. Use EntitySearcher to get text and extract relevent sentences from html files generated from Step 2.
 
 ## Major Classes
 
@@ -28,9 +28,10 @@ Derived from Eric's gopage package.
 
 * Description
 	
-	* Given a list of query keywords, generate sentences that contains given keyword.
+	* Given a list of query keywords, generate sentences that contain given keyword pair.
 	
-	* Example:
+* Example:
+
 		from textblob import TextBlob
 		from web_helper import WebHelper
 		from google_item_parser import GoogleItemParser
@@ -38,11 +39,11 @@ Derived from Eric's gopage package.
 		from entity_sentence_search import EntitySearcher
 		
 		entitySearcher = EntitySearcher('search_result', 'sentence_result.txt', 'keywords.txt')
-	    
-	    text = 'I like to eat apples. Me too. Let\'s go buy some apples.'
-	    results = entitySearcher.search_sentences(['buy', 'some apples'], text)
-	    
-	    entitySearcher.search_entity()
+	
+		text = 'I like to eat apples. Me too. Let\'s go buy some apples.'
+		results = entitySearcher.search_sentences(['buy', 'some apples'], text)
+	
+		entitySearcher.search_entity()
 
 ### PageSearcher
 	
