@@ -60,8 +60,8 @@ Derived from Eric's gopage package.
 		keyword_list = ['Tsinghua', 'PKU', 'hello world']
 		searcher = PageSearcher('output_dir', keyword_list, GoogleHelper())
 		searcher.get_page()
-	
-###GoogleItemParser
+
+### GoogleItemParser
 
 * Description
 	* Given the content of a web page from Google, parse the page to the form of a list of items(snippets).
